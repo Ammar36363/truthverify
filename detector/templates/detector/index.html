@@ -1,0 +1,169 @@
+{% extends 'detector/base.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h1 class="hero-title animate__animated animate__fadeInDown">
+                    Detect Fake News with AI
+                </h1>
+                <p class="hero-subtitle animate__animated animate__fadeInUp animate__delay-1s">
+                    Verify news authenticity in seconds using advanced artificial intelligence
+                </p>
+                <div class="pulse animate__animated animate__pulse animate__infinite">
+                    <div class="feature-icon mx-auto mb-4">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Analysis Card -->
+<div class="row justify-content-center mb-5">
+    <div class="col-lg-8">
+        <div class="form-glass animate__animated animate__fadeInUp animate__delay-2s">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold text-dark mb-3">
+                    <i class="fas fa-search me-2"></i>Verify News Authenticity
+                </h2>
+                <p class="text-muted">Paste any news content from social media, websites, or messages</p>
+            </div>
+            
+            <form method="post" id="newsForm">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    <label class="form-label fw-bold fs-5 text-dark">
+                        <i class="fas fa-newspaper me-2"></i>News Content
+                    </label>
+                    {{ form.news_text }}
+                    <div class="form-text text-end">
+                        <span id="charCount">0</span>/2000 characters
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="form-check form-switch">
+                        {{ form.include_web_search }}
+                        <label class="form-check-label fw-bold text-dark" for="{{ form.include_web_search.id_for_label }}">
+                            <i class="fas fa-globe me-2"></i>Enable Web Search for Fact-Checking
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <button type="submit" class="btn btn-glow btn-lg">
+                        <i class="fas fa-bolt me-2"></i>Analyze News Authenticity
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row justify-content-center mb-5">
+    <div class="col-12 text-center mb-4">
+        <h2 class="text-white fw-bold">Why Choose TruthVerify?</h2>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="glass-card p-4 text-center h-100 feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-brain"></i>
+            </div>
+            <h5 class="text-white mb-3">Advanced AI Analysis</h5>
+            <p class="text-light">Powered by Google's Gemini AI for sophisticated pattern recognition and credibility assessment</p>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="glass-card p-4 text-center h-100 feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <h5 class="text-white mb-3">Lightning Fast</h5>
+            <p class="text-light">Get real-time analysis results in seconds with our optimized processing pipeline</p>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="glass-card p-4 text-center h-100 feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h5 class="text-white mb-3">Multi-Source Verification</h5>
+            <p class="text-light">Cross-reference information with web searches and reliable fact-checking databases</p>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="glass-card p-5">
+            <div class="row text-center">
+                <div class="col-md-3 mb-4 stats-card">
+                    <div class="stats-number">95%</div>
+                    <small class="text-light">Accuracy Rate</small>
+                </div>
+                <div class="col-md-3 mb-4 stats-card">
+                    <div class="stats-number">2.1s</div>
+                    <small class="text-light">Average Response</small>
+                </div>
+                <div class="col-md-3 mb-4 stats-card">
+                    <div class="stats-number">10K+</div>
+                    <small class="text-light">News Verified</small>
+                </div>
+                <div class="col-md-3 mb-4 stats-card">
+                    <div class="stats-number">24/7</div>
+                    <small class="text-light">Active Monitoring</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const textarea = document.querySelector('textarea');
+        const form = document.getElementById('newsForm');
+        
+        // Character counter
+        if (textarea) {
+            const counter = document.getElementById('charCount');
+            textarea.addEventListener('input', function() {
+                counter.textContent = this.value.length;
+                
+                // Add pulse animation when typing
+                if (this.value.length > 0) {
+                    counter.classList.add('text-danger', 'fw-bold');
+                } else {
+                    counter.classList.remove('text-danger', 'fw-bold');
+                }
+            });
+        }
+        
+        // Form submission animation
+        form.addEventListener('submit', function() {
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Analyzing...';
+            btn.disabled = true;
+            
+            // Add loading animation to the form
+            this.classList.add('animate__animated', 'animate__pulse');
+        });
+        
+        // Add floating animation to stats with delay
+        const stats = document.querySelectorAll('.stats-card');
+        stats.forEach((stat, index) => {
+            stat.style.animationDelay = `${index * 0.3}s`;
+        });
+    });
+</script>
+{% endblock %}

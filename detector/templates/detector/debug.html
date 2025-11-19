@@ -1,0 +1,25 @@
+{% extends 'detector/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Debug Information</h2>
+    
+    <div class="card">
+        <div class="card-body">
+            <h5>API Key Status</h5>
+            <ul>
+                <li>From Settings: {{ debug_info.settings_gemini_key }}</li>
+                <li>From Environment: {{ debug_info.env_gemini_key }}</li>
+                <li>Detector has key: {{ detector_has_key }}</li>
+                <li>Detector key preview: {{ detector_key_preview }}</li>
+            </ul>
+            
+            <h5>Secret Key Status</h5>
+            <ul>
+                <li>From Settings: {{ debug_info.settings_secret_key }}</li>
+                <li>From Environment: {{ debug_info.env_secret_key }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

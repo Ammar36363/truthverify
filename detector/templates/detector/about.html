@@ -1,0 +1,29 @@
+{% extends 'detector/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white text-center">
+                <h2 class="mb-0">About TruthVerify</h2>
+            </div>
+            <div class="card-body">
+                <p>This tool helps you verify news authenticity using AI technology.</p>
+                
+                <h5>How it works:</h5>
+                <ul>
+                    <li>Paste news content in the text area</li>
+                    <li>AI analyzes the content using Gemini API</li>
+                    <li>Get instant credibility assessment</li>
+                </ul>
+                
+                <div class="alert alert-warning">
+                    <strong>Disclaimer:</strong> This tool provides AI-based analysis and should be used as a reference only.
+                </div>
+                
+                <a href="{% url 'detector:index' %}" class="btn btn-primary">Check News Now</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

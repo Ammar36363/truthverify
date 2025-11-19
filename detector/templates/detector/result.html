@@ -1,0 +1,220 @@
+{% extends 'detector/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- Back Button -->
+        <div class="mb-4 animate__animated animate__fadeInLeft">
+            <a href="{% url 'detector:index' %}" class="btn btn-glow">
+                <i class="fas fa-arrow-left me-2"></i>Check Another News
+            </a>
+        </div>
+
+        <!-- Main Result Card -->
+        <div class="result-card animate__animated animate__fadeInUp">
+            <!-- Header -->
+            <div class="p-4" style="background: var(--primary-gradient);">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h2 class="text-white mb-0">
+                            <i class="fas fa-chart-bar me-2"></i>Analysis Result
+                        </h2>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="confidence-ring mx-auto">
+                            <div class="confidence-score">
+                                {{ result.analysis.confidence_score|floatformat:2 }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4">
+                <!-- News Preview -->
+                <div class="mb-4">
+                    <h5 class="fw-bold mb-3 text-dark">
+                        <i class="fas fa-newspaper me-2"></i>News Content Preview
+                    </h5>
+                    <div class="p-3 bg-light rounded border">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-quote-left text-muted me-2 mt-1"></i>
+                            <p class="mb-0 text-dark">{{ result.news_preview }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Status -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="p-4 rounded text-white text-center {% if result.analysis.is_fake == True %}bg-danger{% elif result.analysis.is_fake == False %}bg-success{% else %}bg-warning{% endif %}">
+                            <h3 class="mb-3">
+                                {% if result.analysis.is_fake == True %}
+                                    <i class="fas fa-times-circle me-2"></i>Likely Fake News
+                                {% elif result.analysis.is_fake == False %}
+                                    <i class="fas fa-check-circle me-2"></i>Likely Real News
+                                {% else %}
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Uncertain - Manual Verification Recommended
+                                {% endif %}
+                            </h3>
+                            <p class="mb-0 opacity-90">Confidence Score: {{ result.analysis.confidence_score|floatformat:2 }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analysis Details -->
+                <div class="row">
+                    <!-- Reasons -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-header bg-danger text-white">
+                                <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Analysis Reasons</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    {% for reason in result.analysis.reasons %}
+                                        <li class="list-group-item d-flex align-items-start">
+                                            <i class="fas fa-circle text-danger me-2 mt-1" style="font-size: 0.5rem;"></i>
+                                            <span>{{ reason }}</span>
+                                        </li>
+                                    {% empty %}
+                                        <li class="list-group-item text-muted">No specific reasons provided</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recommendations -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Recommendations</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    {% for recommendation in result.analysis.recommendations %}
+                                        <li class="list-group-item d-flex align-items-start">
+                                            <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                                            <span>{{ recommendation }}</span>
+                                        </li>
+                                    {% empty %}
+                                        <li class="list-group-item text-muted">Verify with multiple reliable sources</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Analysis -->
+                {% if result.analysis.fact_check_notes %}
+                <div class="card mb-4 border-0 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-search me-2"></i>Detailed Analysis</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-robot text-primary me-3 mt-1"></i>
+                            <p class="mb-0">{{ result.analysis.fact_check_notes }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Sources Checked -->
+                {% if result.sources_checked %}
+                <div class="card mb-4 border-0 shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-globe me-2"></i>Sources Checked</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for source in result.sources_checked %}
+                            <div class="border-bottom pb-3 mb-3">
+                                <h6 class="fw-bold">
+                                    <i class="fas fa-link me-2"></i>{{ source.title }}
+                                </h6>
+                                <p class="text-muted mb-2">{{ source.snippet }}</p>
+                                <a href="{{ source.url }}" target="_blank" class="btn btn-sm btn-outline-info">
+                                    <i class="fas fa-external-link-alt me-1"></i>Visit Source
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Share Section -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0"><i class="fas fa-share-alt me-2"></i>Share This Analysis</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="mb-3 text-muted">Help others verify this information by sharing the analysis</p>
+                        <div class="share-buttons">
+                            <button class="btn btn-outline-primary share-btn me-2" onclick="copyToClipboard()">
+                                <i class="fas fa-copy me-2"></i>Copy Link
+                            </button>
+                            <a href="whatsapp://send?text=Check this news analysis: {{ request.build_absolute_uri }}" 
+                               class="btn btn-outline-success share-btn me-2">
+                                <i class="fab fa-whatsapp me-2"></i>WhatsApp
+                            </a>
+                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" 
+                               target="_blank" class="btn btn-outline-primary share-btn me-2">
+                                <i class="fab fa-facebook me-2"></i>Facebook
+                            </a>
+                            <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text=Check this news analysis" 
+                               target="_blank" class="btn btn-outline-info share-btn">
+                                <i class="fab fa-twitter me-2"></i>Twitter
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add animations to result cards
+        const cards = document.querySelectorAll('.card');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.2}s`;
+            card.classList.add('animate__animated', 'animate__fadeInUp');
+        });
+        
+        // Animate confidence ring
+        const confidenceRing = document.querySelector('.confidence-ring');
+        const confidenceScore = {{ result.analysis.confidence_score|default:0 }};
+        if (confidenceRing) {
+            const percentage = confidenceScore * 100;
+            confidenceRing.style.background = `conic-gradient(#4facfe 0%, #00f2fe ${percentage}%, #e9ecef ${percentage}% 100%)`;
+        }
+        
+        // Add pulse animation to the main result status
+        const resultStatus = document.querySelector('.rounded.text-white.text-center');
+        if (resultStatus) {
+            resultStatus.classList.add('animate__animated', 'animate__pulse');
+        }
+    });
+
+    // Copy to clipboard function
+    function copyToClipboard() {
+        const url = "{{ request.build_absolute_uri }}";
+        navigator.clipboard.writeText(url).then(function() {
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            btn.classList.remove('btn-outline-primary');
+            btn.classList.add('btn-success');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-outline-primary');
+            }, 2000);
+        });
+    }
+</script>
+{% endblock %}
